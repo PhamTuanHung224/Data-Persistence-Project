@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,7 +13,7 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public Text bestScoreText;
-    public GameObject GameOverText;
+    public GameObject GameOverScene;
     
     
     private bool m_Started = false;
@@ -58,6 +58,7 @@ public class MainManager : MonoBehaviour
                 Ball.transform.SetParent(null);
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
             }
+            bestScoreText.text = $"Best Score: {playerName}:  {DataManager.Instance.score}";
         }
         else if (m_GameOver)
         {
@@ -76,14 +77,24 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
-        
-        if (m_Points >= DataManager.Instance.bestScore)
+        if (m_Points >= DataManager.Instance.score)
         {
-            DataManager.Instance.bestScore = m_Points;
+            DataManager.Instance.score = m_Points;
+            
         }
-        bestScoreText.text = $"Best Score: {playerName}:  {DataManager.Instance.bestScore}";
+        if (DataManager.Instance.score >= DataManager.Instance.bestScore)
+        {
+            DataManager.Instance.bestScore = DataManager.Instance.score;
+            DataManager.Instance.SavingData();
+        }
+        
         m_GameOver = true;
-        GameOverText.SetActive(true);
+        GameOverScene.SetActive(true);
     }
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
     
 }

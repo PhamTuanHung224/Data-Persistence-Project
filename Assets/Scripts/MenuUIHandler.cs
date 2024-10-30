@@ -4,7 +4,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
 public class MenuUIHandler : MonoBehaviour
 {
     public TextMeshProUGUI bestScoreText;
@@ -12,18 +14,32 @@ public class MenuUIHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        bestScoreText.text = "Best Score: " + DataManager.Instance.iplayerName + DataManager.Instance.bestScore;
+        DataManager.Instance.LoadingData();
+        bestScoreText.text = "Best Score: " + DataManager.Instance.iplayerName +": " + DataManager.Instance.bestScore;
     }
 
     public void EnterName()
     {
         InputField inputPlayerName = FindObjectOfType<InputField>();
-        DataManager.Instance.iplayerName = inputPlayerName.text;
+        if (inputPlayerName.text != DataManager.Instance.iplayerName)
+        {
+           DataManager.Instance.iplayerName = inputPlayerName.text; 
+           DataManager.Instance.score = 0;
+        }
+        
     }
     public void StartGame()
     {
         
         SceneManager.LoadScene(1);
-
+    }
+    public void ExitGame()
+    {
+        
+# if UNITY_EDITOR
+        EditorApplication.ExitPlaymode();
+# else
+        Application.Quit();
+# endif
     }
 }
